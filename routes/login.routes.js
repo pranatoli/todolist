@@ -1,8 +1,8 @@
 require('dotenv').config();
 
 let express = require('express');
-const routes = express.Router();
+const router = express.Router();
 // require controller
 
 
-module.exports = routes;
+module.exports = router;

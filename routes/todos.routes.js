@@ -1,17 +1,17 @@
 require('dotenv').config();
 
 let express = require('express');
-const routes = express.Router();
-const ToDosControllers = require('../controllers/todos.controller');
+const router = express.Router();
+const ToDosControllers = require('../controllers/todos.controllers');
 
-routes.get('/', ToDosControllers.getToDos);
+router.get('/', ToDosControllers.getToDos);
 
-routes.post('/', ToDosControllers.addToDo);
+router.post('/', ToDosControllers.addToDo);
 
-routes.patch('/:id', ToDosControllers.updateTitleToDo);
+router.patch('/:id', ToDosControllers.updateTitleToDo);
 
-routes.patch('/:id/isCompleted', ToDosControllers.isCompletedToDo);
+router.patch('/:id/isCompleted', ToDosControllers.isCompletedToDo);
 
-routes.delete('/:id', ToDosControllers.deleteToDo);
+router.delete('/:id', ToDosControllers.deleteToDo);
 
-module.exports = routes;
+module.exports = router;
