@@ -31,7 +31,7 @@ class RegisterServices {
 function makeUser(dataUser) {
     let userID = makeId();
     // console.log('userID: ' + userID);
-    dataUser = { ...dataUser, id: userID, tasks: [] }
+    dataUser = { id: userID, ...dataUser, tasks: [] }
     return dataUser;
 }
 

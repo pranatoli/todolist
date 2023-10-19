@@ -16,7 +16,6 @@ class RegisterController {
                     errors: result.array()
                 })
             }
-
         } catch (error) {
             // require sentry
         }
