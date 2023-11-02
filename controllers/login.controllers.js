@@ -1,13 +1,15 @@
 const { validationResult } = require('express-validator');
 const LoginServices = require('../services/login.services');
+const Sentry = require("@sentry/node");
+
 
 class LoginController {
     async loginUser(req, res) {
         try {
             const result = validationResult(req);
-            console.log("req.body" + req.body);
+            console.log("req.body: " + req.body);
             if (result.isEmpty()) {
-                const user = await LoginServices.loginServices(req.body);
+                const user = await LoginServices.login(req.body);
                 res.status(user.status).send(user.send)
             } else {
                 res.send({
@@ -15,7 +17,7 @@ class LoginController {
                 })
             }
         } catch (error) {
-            // подключить Sentry
+            Sentry.captureException(error);
         }
     }
 }

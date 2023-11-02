@@ -9,7 +9,13 @@ const { body, query, param, matchedData, validationResult } = require('express-v
 const validationBody = [
     body('username').notEmpty().isString().trim().escape(),
     body('email').notEmpty().isString().isEmail().withMessage('Not a valid e-mail address').escape(),
-    body('password').notEmpty().isString().trim().escape().isLength({ min: 8 }),
+    body('password').notEmpty().isString().trim().escape().isStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1
+    })
+        .withMessage("Password must be greater than 8 and contain at least one uppercase letter, one lowercase letter, and one number"),
     body('gender').notEmpty().isString().trim().escape(),
     body('age').notEmpty().isInt().isLength({ max: 3 }),
 ];

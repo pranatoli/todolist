@@ -4,7 +4,7 @@ let express = require('express');
 const router = express.Router();
 const LoginControllers = require('../controllers/login.controllers');
 
-const { body, query, param, matchedData, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 const validationBody = [
     body('email').notEmpty().isString().isEmail().withMessage('Not a valid e-mail address').escape(),

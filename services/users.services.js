@@ -7,8 +7,8 @@ class UserServices {
                 if (error) throw error;
                 let users = JSON.parse(data);
                 let resArr = users.map(item => {
-                    delete item.password
-                    return item
+                    delete item.password;
+                    return item;
                 })
                 res({ status: 200, send: resArr });
             })

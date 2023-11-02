@@ -6,6 +6,14 @@ const port = process.env.PORT || 3000;
 const routes = require('./routes/index');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const Sentry = require('@sentry/node');
+
+Sentry.init(
+    {
+        dsn: process.env.DNS,
+        tracesSampleRate: 1.0
+    }
+);
 
 const swaggerOptioins = {
     definition: {
@@ -18,10 +26,24 @@ const swaggerOptioins = {
             },
             servers: [`http://localhost:${port}/`],
             version: "1.0.0"
-        }
+        },
+        basePath: '/api',
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'apiKey',
+                    in: 'header',
+                    name: 'Authorization',
+                    description: "",
+                }
+            }
+        },
     },
     apis: ["./routes/*.js"],
 };
+
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.errorHandler());
 
 const swaggerDocs = swaggerJsDoc(swaggerOptioins);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
