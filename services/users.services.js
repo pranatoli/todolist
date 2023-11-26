@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { getConnect, getDb } = require("../config/db")
 
 class UserServices {
     getAllUsers() {
@@ -14,8 +15,17 @@ class UserServices {
             })
         })
     }
-    getUserById() {
-
+    async getUserByDB() {
+        return new Promise(async (res, rej) => {
+            const client = await getConnect();
+            const db = await getDb(client);
+            const data = await db
+                .collection('users')
+                .find({})
+                .toArray();
+            client.close();
+            res(data);
+        })
     }
 }
 
