@@ -14,7 +14,7 @@ class UserController {
     // }
     async getAllUsers(req, res) {
         try {
-            const users = await UserServices.getUserByDB();
+            const users = await UserServices.getUsers();
             res.status(200).send(users)
         } catch (error) {
             Sentry.captureException(error);

@@ -1,46 +1,30 @@
 const { error } = require('console');
 const fs = require('fs');
+const { getConnect, getDb } = require("../config/db");
 
 class ToDosServices {
-    getTasksUser(id) {
-        console.log('enter ToDosServices getTasksUser');
-        return new Promise((res, rej) => {
-            fs.readFile('data/tasks.json', 'utf8', (error, data) => {
-                if (error) throw error;
-                const tasks = JSON.parse(data);
-                console.log(tasks);
-                if (tasks.length == 0) {
-                    res({ status: 200, send: "o rear for users" });
-                }
-                const userTasks = tasks.filter(item => item.idUser == id)
-                if (userTasks.length == 0) {
-                    res({ status: 200, send: "this user has no tasks" });
-                }
-
-                res({ status: 200, send: userTasks });
-            })
-        })
+    async getTasksUser(id) {
+        const client = await getConnect();
+        const db = await getDb(client);
+        const userTasks = await db.collection("tasks").find({ "idUser": id }).toArray();
+        if (userTasks.length == 0) return { status: 200, send: "this user has no tasks" };
+        client.close();
+        return { status: 200, send: userTasks };
     }
 
-    createTask(id, body) {
-        return new Promise((res, rej) => {
-            fs.readFile('data/tasks.json', 'utf8', (error, data) => {
-                if (error) throw error;
-                const tasks = JSON.parse(data);
-                // console.log(body);
-                const task = {
-                    id: ToDosServices.makeId(),
-                    title: body.title,
-                    isComplite: false,
-                    idUser: id,
-                }
-                tasks.push(task);
-                fs.writeFile('data/tasks.json', JSON.stringify(tasks), (error) => {
-                    if (error) throw error;
-                });
-                res({ status: 200, send: task });
-            })
-        })
+    async createTask(id, body) {
+        const client = await getConnect();
+        const db = await getDb(client);
+        const objTask = {
+            title: body.title,
+            isComplite: false,
+            idUser: id,
+        }
+        await db.collection("tasks").insertOne(objTask);
+        const tasks = await db.collection("tasks").find().toArray();
+        const returnTask = tasks.at(-1);
+        client.close();
+        return { status: 200, send: returnTask };
     }
 
     updateTitleTask(id, req) {
@@ -48,8 +32,6 @@ class ToDosServices {
             fs.readFile('data/tasks.json', 'utf8', (error, data) => {
                 if (error) throw error;
                 const tasks = JSON.parse(data);
-                // console.log(req.params.id);
-                // console.log(req.body.title);
                 const task = tasks.find(item => item.id == req.params.id);
                 if (!task) {
                     res({ status: 404, send: 'task not found' });
@@ -67,13 +49,10 @@ class ToDosServices {
     }
 
     isCompletedTask(id, req) {
-        console.log('isCompletedTask');
-
         return new Promise((res, rej) => {
             fs.readFile('data/tasks.json', 'utf8', (error, data) => {
                 if (error) throw error;
                 const tasks = JSON.parse(data);
-                // console.log('id: ' + req.params.id);
                 const task = tasks.find(item => item.id == req.params.id);
                 if (!task) {
                     res({ status: 404, send: 'task not found' });
@@ -87,7 +66,6 @@ class ToDosServices {
                         if (error) throw error;
                     });
                     const resTask = updateTask.find((item => item.id == req.params.id));
-                    console.log(resTask);
                     res({ status: 200, send: resTask });
                 } else res({ status: 400, send: 'this not your task' });
             })
@@ -95,13 +73,10 @@ class ToDosServices {
     }
 
     deleteTask(id, req) {
-        console.log('deleteTask');
-
         return new Promise((res, rej) => {
             fs.readFile('data/tasks.json', 'utf8', (error, data) => {
                 if (error) throw error;
                 const tasks = JSON.parse(data);
-                // console.log('idUser: ' + req.params.id);
                 const task = tasks.find(item => item.id == req.params.id);
                 if (!task) {
                     res({ status: 404, send: 'task not found' });
