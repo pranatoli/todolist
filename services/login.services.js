@@ -14,11 +14,16 @@ class LoginServices {
             const isPassEquals = bcrypt.compareSync(password, user[0].password);
             if (isPassEquals) {
                 const token = jwt.sign({ id: user[0]._id, email: email }, process.env.ACCESS_TOKEN_SECRET, { noTimestamp: true });
+                client.close();
                 return { status: 200, send: token }; // пользователь найден, пароль совпадает, вернуть токен
-            } else return { status: 400, send: 'incorrect password' }; // пользователь найден, пароль не совпадает
-        } else return { status: 400, send: 'User with such an email is not registered' }; // пользователя с таким email не существует
-        console.log(user);
-        client.close();
+            } else {// пользователь найден, пароль не совпадает
+                client.close();
+                return { status: 400, send: 'incorrect password' };
+            }
+        } else {// пользователя с таким email не существует
+            client.close();
+            return { status: 400, send: 'User with such an email is not registered' };
+        }
     }
 }
 

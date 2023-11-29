@@ -44,7 +44,6 @@ class ToDosController {
     }
 
     async updateTitleToDo(req, res) {
-        console.log('enter in ToDosController updateTitleToDo');
         try {
             const result = validationResult(req);
             if (result.isEmpty()) {
@@ -63,7 +62,6 @@ class ToDosController {
     }
 
     async isCompletedToDo(req, res) {
-        console.log('enter in ToDosController isCompletedToDo');
         try {
             const result = validationResult(req);
             if (result.isEmpty()) {
@@ -82,7 +80,6 @@ class ToDosController {
     }
 
     async deleteToDo(req, res) {
-        console.log('enter in ToDosController deleteToDo');
         try {
             const result = validationResult(req);
             if (result.isEmpty()) {

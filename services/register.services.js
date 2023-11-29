@@ -18,20 +18,21 @@ class RegisterServices {
             if (findUser == 0) {
                 const newUser = RegisterServices.makeUser(body);
                 data = await db.collection('users').insertOne(newUser);
-            } else return { status: 400, send: "user with this email is registered" }
+            } else {
+                client.close();
+                return { status: 400, send: "user with this email is registered" };
+            }
         }
         const returnUser = await db.collection('users') // ищем созданного пользователя по email и возкращаем его
             .find({ "email": body.email })
             .toArray();
         client.close();
         returnUser.map(item => item.password = body.password) // скрываем хэшированный пароль и возвращаем введенный пользователем
-        // console.log(returnUser);
         return { status: 200, send: returnUser };
     }
     static makeUser(data) {
         const { username, email, password, gender, age } = data;
         const hashPassword = bcrypt.hashSync(password, 3);
-        // console.log("hash" + hashPassword);
         const dataUser = { username, email, password: hashPassword, gender, age, tasks: [] };
         return dataUser;
     }

@@ -17,7 +17,7 @@ const validationBody = [
 ];
 
 const validationParamId = [
-    param('id').notEmpty().isInt()
+    param('id').notEmpty().isString()
 ]
 
 /**
@@ -126,7 +126,7 @@ router.patch('/:id', authenticateToken, validationBody, validationParamId, ToDos
  *          400:
  *            description: bad request
  */
-router.patch('/:id/isCompleted', authenticateToken, validationBody, validationParamId, ToDosControllers.isCompletedToDo);
+router.patch('/:id/isCompleted', authenticateToken, validationParamId, ToDosControllers.isCompletedToDo);
 /**
  *@swagger
  *  /api/todos/{id}:
