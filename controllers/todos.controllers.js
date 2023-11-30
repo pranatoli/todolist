@@ -7,12 +7,10 @@ const Sentry = require("@sentry/node");
 
 class ToDosController {
     async getToDos(req, res) {
-        console.log('enter in ToDosController getToDos');
         try {
             const result = validationResult(req);
             if (result.isEmpty()) {
                 const userData = req.user;
-                // console.log(userData.id);
                 const user = await ToDosServices.getTasksUser(userData.id);
                 res.status(user.status).send(user.send)
             } else {
@@ -28,12 +26,10 @@ class ToDosController {
     }
 
     async addToDo(req, res) {
-        console.log('enter in ToDosController addToDo');
         try {
             const result = validationResult(req);
             if (result.isEmpty()) {
                 const userData = req.user;
-                // console.log(req.body);
                 const task = await ToDosServices.createTask(userData.id, req.body);
                 res.status(task.status).send(task.send)
             } else {
@@ -48,7 +44,6 @@ class ToDosController {
     }
 
     async updateTitleToDo(req, res) {
-        console.log('enter in ToDosController updateTitleToDo');
         try {
             const result = validationResult(req);
             if (result.isEmpty()) {
@@ -67,7 +62,6 @@ class ToDosController {
     }
 
     async isCompletedToDo(req, res) {
-        console.log('enter in ToDosController isCompletedToDo');
         try {
             const result = validationResult(req);
             if (result.isEmpty()) {
@@ -86,7 +80,6 @@ class ToDosController {
     }
 
     async deleteToDo(req, res) {
-        console.log('enter in ToDosController deleteToDo');
         try {
             const result = validationResult(req);
             if (result.isEmpty()) {

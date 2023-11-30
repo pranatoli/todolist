@@ -1,51 +1,35 @@
 const { error } = require('console');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid')
+const User = require('../models/userModel');
 
 class RegisterServices {
-    registration(req) {
-        return new Promise((res, rej) => {
-            fs.readFile('data/users.json', 'utf8', (error, data) => {
-                if (error) throw error;
-                const users = JSON.parse(data);
-                // console.log(users);
-                if (users.length == 0) { // добавляем пользователя если массив пуст
-                    let user = RegisterServices.makeUser(req);
-                    users.push(user);
-                } else { //проверяем на наличие зарегистрированного пользователя с переданным email
-                    let filtredUsers = users.filter(item => item.email == req.email)
-                    if (filtredUsers == 0) {
-                        let user = RegisterServices.makeUser(req);
-                        users.push(user);
-                    } else res({ status: 400, send: "user with this email is registered" })
-                }
-                fs.writeFile('data/users.json', JSON.stringify(users), (error) => {
-                    if (error) throw error;
-                });
-                let newUser = users[users.length - 1];
-                res({ status: 200, send: newUser });
-            })
-        })
+    async registration(body) {
+        const users = await User.find({});
+        let data;
+        if (users.length == 0) { // добавляем пользователя если массив пуст
+            const newUser = RegisterServices.makeUser(body);
+            data = await new User(newUser);
+            data.save();
+        } else {//проверяем на наличие зарегистрированного пользователя с переданным email
+            let findUser = users.filter(item => item.email == body.email);
+            if (findUser == 0) {
+                const newUser = RegisterServices.makeUser(body);
+                data = await new User(newUser);
+                data.save();
+            } else {
+                return { status: 400, send: "user with this email is registered" };
+            }
+        }
+        const returnUser = await User.find({ email: body.email }) // ищем созданного пользователя по email и возкращаем его
+        returnUser.map(item => item.password = body.password) // скрываем хэшированный пароль и возвращаем введенный пользователем
+        return { status: 200, send: returnUser };
     }
     static makeUser(data) {
-        let userID = RegisterServices.makeId();
-        // const userID = this.generateUUID();
         const { username, email, password, gender, age } = data;
         const hashPassword = bcrypt.hashSync(password, 3);
-        console.log("hash" + hashPassword);
-        const dataUser = { id: userID, username, email, password: hashPassword, gender, age, tasks: [] };
+        const dataUser = { username, email, password: hashPassword, gender, age, tasks: [] };
         return dataUser;
-    }
-
-    // static generateUUID() {
-    //     return uuidv4();
-    // }
-
-    static makeId() {
-        let array = fs.readFileSync('data/users.json', { encoding: "utf-8" });
-        let lastId = (JSON.parse(array)).length + 1;
-        return lastId;
     }
 }
 

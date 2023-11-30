@@ -7,6 +7,8 @@ const routes = require('./routes/index');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const Sentry = require('@sentry/node');
+const { db } = require('./config/db');
+db();
 
 Sentry.init(
     {

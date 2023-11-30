@@ -6,6 +6,7 @@ const ToDosControllers = require('../controllers/todos.controllers');
 const jwt = require('jsonwebtoken');
 const { body, query, param, matchedData, validationResult } = require('express-validator');
 const Sentry = require('@sentry/node');
+const { authenticateToken } = require('../helpers/helpers');
 
 const validationBody = [
     body('title').notEmpty()
@@ -16,22 +17,8 @@ const validationBody = [
 ];
 
 const validationParamId = [
-    param('id').notEmpty().isInt()
+    param('id').notEmpty().isString()
 ]
-
-const authenticateToken = (req, res, next) => {
-    try {
-        const token = req.headers.authorization;
-        if (token == null) res.sendStatus(401);
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if (err) throw new Error('invalid token');
-            req.user = user;
-            next();
-        })
-    } catch (error) {
-        res.sendStatus(403)
-    }
-}
 
 /**
  *@swagger
@@ -49,7 +36,7 @@ const authenticateToken = (req, res, next) => {
  *            description: bad request
  * 
  */
-router.get('/', authenticateToken, validationBody, ToDosControllers.getToDos);
+router.get('/', authenticateToken, ToDosControllers.getToDos);
 /**
  *@swagger
  *  /api/todos:
@@ -139,7 +126,7 @@ router.patch('/:id', authenticateToken, validationBody, validationParamId, ToDos
  *          400:
  *            description: bad request
  */
-router.patch('/:id/isCompleted', authenticateToken, validationBody, validationParamId, ToDosControllers.isCompletedToDo);
+router.patch('/:id/isCompleted', authenticateToken, validationParamId, ToDosControllers.isCompletedToDo);
 /**
  *@swagger
  *  /api/todos/{id}:
