@@ -1,16 +1,9 @@
 const fs = require('fs');
-const { getConnect, getDb } = require("../config/db");
+const User = require('../models/userModel');
 
 class UserServices {
     async getUsers() {
-        const client = await getConnect();
-        const db = await getDb(client);
-        const data = await db
-            .collection('users')
-            .find({})
-            .toArray();
-        client.close();
-        return data;
+        return await User.find({});
     }
 }
 
