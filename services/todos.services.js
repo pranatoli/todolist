@@ -33,7 +33,6 @@ class ToDosServices {
             const updateTask = await Task.findByIdAndUpdate(idTask, { title: req.body.title }, { new: true });
             return { status: 200, send: updateTask }
         } else {
-            client.close();
             return { status: 400, send: 'this not your task' }
         };
     }
@@ -48,7 +47,6 @@ class ToDosServices {
             const updateTask = await Task.findByIdAndUpdate(idTask, { isComplite: status }, { new: true });
             return { status: 200, send: updateTask }
         } else {
-            client.close();
             return { status: 400, send: 'this not your task' }
         };
     }
