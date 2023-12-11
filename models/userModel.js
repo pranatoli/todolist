@@ -37,9 +37,6 @@ const userSchema = new Schema({
         minlength: 1,
         trim: true,
     },
-    tasks: {
-        type: Array,
-    },
 },
     { versionKey: false })
 

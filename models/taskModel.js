@@ -15,7 +15,8 @@ const taskSchema = new Schema({
         trim: true,
     },
     idUser: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
 },
     { versionKey: false })

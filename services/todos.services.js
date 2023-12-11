@@ -1,8 +1,7 @@
 const { error } = require('console');
-const fs = require('fs');
-const { getConnect, getDb } = require("../config/db");
-const { ObjectId } = require('mongodb');
 const Task = require('../models/taskModel');
+const User = require('../models/userModel');
+const mongoose = require('mongoose');
 
 class ToDosServices {
     async getTasksUser(id) {
@@ -14,12 +13,11 @@ class ToDosServices {
     }
 
     async createTask(id, body) {
-        const objTask = {
+        const addTask = new Task({
             title: body.title,
             isComplite: false,
             idUser: id,
-        };
-        const addTask = new Task(objTask);
+        });
         await addTask.save();
         const tasks = await Task.find();
         const returnTask = tasks.at(-1);
